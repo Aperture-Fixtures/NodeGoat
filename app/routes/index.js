@@ -8,6 +8,8 @@ const ResearchHandler = require("./research");
 const tutorialRouter = require("./tutorial");
 const ErrorHandler = require("./error").errorHandler;
 
+const rateLimit = require("express-rate-limit");
+
 const index = (app, db) => {
 
     "use strict";
@@ -31,7 +33,13 @@ const index = (app, db) => {
 
     // Login form
     app.get("/login", sessionHandler.displayLoginPage);
-    app.post("/login", sessionHandler.handleLoginRequest);
+    // Define rate limiter for login POST to prevent brute-force/DoS
+    const loginLimiter = rateLimit({
+        windowMs: 5 * 60 * 1000, // 5 minutes
+        max: 5, // Limit to 5 requests per windowMs per IP
+        message: "Too many login attempts from this IP, please try again after 5 minutes."
+    });
+    app.post("/login", loginLimiter, sessionHandler.handleLoginRequest);
 
     // Signup form
     app.get("/signup", sessionHandler.displaySignupPage);
