@@ -12,7 +12,11 @@ function ResearchHandler(db) {
     this.displayResearch = (req, res) => {
 
         if (req.query.symbol) {
-            const url = req.query.url + req.query.symbol;
+            // Allow-list of supported stock info APIs, or a trusted base URL
+            const BASE_URL = "https://api.example.com/stocks/"; // Replace with your actual stock API base
+            // Only allow alphanumeric stock symbols (modify as needed)
+            const symbol = String(req.query.symbol).replace(/[^a-zA-Z0-9]/g, "");
+            const url = BASE_URL + symbol;
             return needle.get(url, (error, newResponse, body) => {
                 if (!error && newResponse.statusCode === 200) {
                     res.writeHead(200, {
