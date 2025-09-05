@@ -101,7 +101,6 @@ function UserDAO(db) {
     };
 
     this.getUserByUserName = (userName, callback) => {
-        // touch to force re-run
         usersCol.findOne({
             userName: userName
         }, callback);
