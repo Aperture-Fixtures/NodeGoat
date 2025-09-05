@@ -101,6 +101,9 @@ function UserDAO(db) {
     };
 
     this.getUserByUserName = (userName, callback) => {
+        if (typeof userName !== "string") {
+            return callback(new Error("Invalid userName type"), null);
+        }
         usersCol.findOne({
             userName: userName
         }, callback);
